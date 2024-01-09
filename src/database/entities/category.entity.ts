@@ -17,9 +17,11 @@ export class Category {
   @Column()
   name: string;
 
+  // Establish a many-to-one relationship with the User entity, specifying the inverse side and onDelete behavior
   @ManyToOne(() => User, (user) => user.categories, { onDelete: "CASCADE" })
   user: User;
 
+  // Establish a many-to-many relationship with the Note entity specifying the inverse side onDelete behavior
   @ManyToMany(() => Note, (note) => note.categories, {
     onDelete: "CASCADE",
   })
