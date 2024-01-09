@@ -1,0 +1,25 @@
+version: "3.8"
+
+networks:
+  REST_API:
+
+services:
+  mysqldb:
+    image: mysql:8
+    environment:
+      - MYSQL_USER=$DB_USERNAME
+      - MYSQL_PASSWORD=$DB_PASSWORD
+      - MYSQL_ROOT_PASSWORD=$DB_ROOT_PASSWORD
+      - MYSQL_DATABASE=$DB_DATABASE
+    volumes:
+      - ./docker/mysql:/var/lib/mysql
+    networks:
+      - REST_API
+    ports:
+      - $DB_PORT:3306
+    logging:
+      driver: none
+
+volumes:
+  mysql: 
+
