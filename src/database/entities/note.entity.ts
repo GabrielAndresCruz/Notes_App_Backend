@@ -15,13 +15,13 @@ export class Note {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ type: "varchar", length: 30 })
   title: string;
 
-  @Column()
+  @Column({ type: "varchar", length: 500 })
   content: string;
 
-  @Column()
+  @Column({ default: false })
   archived: boolean;
 
   // Establish a many-to-one relationship with the User entity, specifying the inverse side and onDelete behavior
