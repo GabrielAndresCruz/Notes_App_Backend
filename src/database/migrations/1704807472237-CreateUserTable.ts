@@ -39,34 +39,9 @@ export class CreateUserTable1704807472237 implements MigrationInterface {
         ],
       })
     );
-
-    // Adding Foreign Keys
-    await queryRunner.createForeignKey(
-      TABLE_NAMES.USER,
-      new TableForeignKey({
-        columnNames: ["id"], // Column in User Table
-        referencedColumnNames: ["user_id"], // Column in the relationship table
-        referencedTableName: TABLE_NAMES.USER, // Name of relationship table
-        onDelete: "CASCADE",
-      })
-    );
-
-    await queryRunner.createForeignKey(
-      TABLE_NAMES.USER,
-      new TableForeignKey({
-        columnNames: ["id"],
-        referencedColumnNames: ["user_id"],
-        referencedTableName: TABLE_NAMES.CATEGORY,
-        onDelete: "CASCADE",
-      })
-    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    // Delete foreign keys in reverse mode
-    await queryRunner.dropForeignKey(TABLE_NAMES.USER, "FK_NOTE_USER");
-    await queryRunner.dropForeignKey(TABLE_NAMES.USER, "FK_CATEGORY_USER");
-
     // Delete table
     await queryRunner.dropTable(TABLE_NAMES.USER);
   }

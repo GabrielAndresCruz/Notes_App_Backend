@@ -25,6 +25,11 @@ export class CreateCategoryTable1704819675817 implements MigrationInterface {
             length: "30",
             isNullable: false,
           },
+          {
+            name: "user_id",
+            type: "int",
+            isNullable: false,
+          },
         ],
       })
     );

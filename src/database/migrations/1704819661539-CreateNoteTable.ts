@@ -36,6 +36,11 @@ export class CreateNoteTable1704819661539 implements MigrationInterface {
             type: "boolean",
             default: false,
           },
+          {
+            name: "user_id",
+            type: "int",
+            isNullable: false,
+          },
         ],
       })
     );
