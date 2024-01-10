@@ -14,7 +14,7 @@ export class Category {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ type: "varchar", length: 30 })
   name: string;
 
   // Establish a many-to-one relationship with the User entity, specifying the inverse side and onDelete behavior
