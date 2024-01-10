@@ -1,17 +1,23 @@
-import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryColumn,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { TABLE_NAMES } from "../../constants/dbTables";
 import { Note } from "./note.entity";
 import { Category } from "./category.entity";
 
 @Entity(TABLE_NAMES.USER)
 export class User {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ type: "varchar", length: "30" })
   username: string;
 
-  @Column()
+  @Column({ type: "varchar", length: "60" })
   email: string;
 
   @Column()
