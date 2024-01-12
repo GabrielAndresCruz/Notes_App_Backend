@@ -1,14 +1,14 @@
 /** @type {import('ts-jest').JestConfigWithTsJest} */
 const dotenv = require('dotenv')
 
-// Load environments variables from .env file
-dotenv.config({ path: ".env.test" })
-
-process.env.NODE_ENV= 'UNIT_TEST'
-
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
-  setupFiles: ['dotenv/config'], // Make sure that dotenv config will be called before test.
-  modulePathIgnorePatterns: ['utils', 'ignored'] // Dictate which pattern to ignore for test.
+  clearMocks: true, // Automatically clears mocks between test to maintain a clean state.
+  roots: ['<rootDir>/src'], // Root folders to search test
+  moduleDirectories: ['node_modules', 'src'], // Where to look for modules when resolving imports. 1th node_modules n' 2nd src
+  moduleNameMapper: {
+    '^@src/(.*)$': '<rootDir>/src/$1',
+    'typeorm': '<rootDir>/__mocks__/typeorm.ts'
+  } // Maps import paths so that Jest can locate the modules.
 };
