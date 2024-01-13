@@ -9,6 +9,6 @@ module.exports = {
   moduleDirectories: ['node_modules', 'src'], // Where to look for modules when resolving imports. 1th node_modules n' 2nd src
   moduleNameMapper: {
     '^@src/(.*)$': '<rootDir>/src/$1',
-    'typeorm': '<rootDir>/__mocks__/typeorm.ts'
+    'typeorm': '<rootDir>/src/__mocks__/typeorm.ts'
   } // Maps import paths so that Jest can locate the modules.
 };
