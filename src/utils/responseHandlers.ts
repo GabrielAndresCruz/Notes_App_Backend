@@ -39,11 +39,13 @@ export const sendSuccess = (
 export const sendError = (
   res: Response,
   statusCode: number | 404,
-  message: string
+  message: string,
+  error: Error
 ): void => {
   const responseBody: ApiResponse = {
     success: false,
     message,
+    data: error,
   };
   res.status(statusCode).send(responseBody);
 };
