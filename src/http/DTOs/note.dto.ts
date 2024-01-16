@@ -29,7 +29,7 @@ export class CreateNoteDTO {
   category: number[];
 }
 
-// DTO validation to update a note.
+// DTO validation to update a note. IsOptional function makes fields optional.
 export class UpdateNoteDTO {
   @IsOptional()
   @IsNotEmpty({ message: "Title is required." })
