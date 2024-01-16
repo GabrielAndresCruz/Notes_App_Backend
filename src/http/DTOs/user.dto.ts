@@ -15,11 +15,12 @@ export class RegisterUserDTO {
   @IsNotEmpty({ message: "Name is required." })
   @IsString({ message: "Name must contain letters." })
   @MinLength(5, { message: "Name must have at least 5 characters." })
-  @MaxLength(30, { message: "Name must not exceed 50 characters." })
+  @MaxLength(30, { message: "Name must not exceed 30 characters." })
   username: string;
 
   @IsEmail({}, { message: "Email is invalid." })
   @IsNotEmpty({ message: "Email is required." })
+  @MaxLength(60, { message: "Email must not exceed 60 characters." })
   email: string;
 
   @Matches(passwordRegEx, {
@@ -48,12 +49,13 @@ export class UpdateUserDTO {
   @IsNotEmpty({ message: "Name is required." })
   @IsString({ message: "Name must contain letters." })
   @MinLength(5, { message: "Name must have at least 5 characters." })
-  @MaxLength(30, { message: "Name must not exceed 50 characters." })
+  @MaxLength(30, { message: "Name must not exceed 30 characters." })
   name: string;
 
   @IsOptional()
   @IsEmail({}, { message: "Email is invalid." })
   @IsNotEmpty({ message: "Email is required." })
+  @MaxLength(60, { message: "Email must not exceed 60 characters." })
   email: string;
 
   @IsOptional()
