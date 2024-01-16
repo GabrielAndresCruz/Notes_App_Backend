@@ -1,6 +1,6 @@
-import { User } from "../database/entities/user.entity";
 import "../__mocks__/typeorm.mock";
 import { createMockRepository, getRepository } from "../__mocks__/typeorm";
+import { User } from "../database/entities/user.entity";
 
 describe("User Entity", () => {
   it("should create a user", () => {
@@ -29,3 +29,4 @@ describe("User Entity", () => {
     expect(mockRepository.save).toHaveBeenCalledWith(user);
   });
 });
+//
