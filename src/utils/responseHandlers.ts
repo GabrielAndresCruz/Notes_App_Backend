@@ -40,7 +40,7 @@ export const sendError = (
   res: Response,
   statusCode: number | 404,
   message: string,
-  error: Error
+  error: any
 ): void => {
   const responseBody: ApiResponse = {
     success: false,

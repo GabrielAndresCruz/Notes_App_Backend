@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { AppDataSource } from "../../database/data-source";
 import { User } from "../../database/entities/user.entity";
+import { sendError, sendResponse } from "../../utils/responseHandlers";
 
 export class UserController {
   /* When you use private variables to encapsulate the logic, you must take two different ways:
@@ -13,16 +14,15 @@ export class UserController {
     2- User arrow function to getFunctions (I'm on this way). Arrow function can't use like constructors, and don't have .prototype property.
   */
 
-  private userRepository = AppDataSource.getRepository(User);
-
   async getAllUsers(req: Request, res: Response) {
     try {
-      const users = await this.userRepository.find();
-      res.status(200).send(users);
+      const userRepository = AppDataSource.getRepository(User);
+      const users = await userRepository.find();
+      sendResponse(res, 200, users, "User list");
     } catch (error) {
-      res.status(400).send({
-        message: error,
-      });
+      sendError(res, 400, "Error to get Users list", error);
     }
   }
 }
+
+export default UserController;
