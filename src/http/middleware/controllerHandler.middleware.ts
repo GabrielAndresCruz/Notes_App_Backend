@@ -7,6 +7,7 @@ const userController = new UserController();
 // Binding and Handling errors
 const users = {
   getAllUsers: errorHandler(userController.getAllUsers.bind(userController)),
+  getOneUser: errorHandler(userController.getOneUser.bind(userController)),
 };
 
 // Export bound and catched functions, like a normal controller function

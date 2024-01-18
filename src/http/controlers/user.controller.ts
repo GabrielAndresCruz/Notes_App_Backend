@@ -16,8 +16,16 @@ export class UserController {
   private userRepository = AppDataSource.getRepository(User);
 
   async getAllUsers(req: Request, res: Response) {
-    const users = await this.userRepository.find();
+    const users: Array<User> = await this.userRepository.find();
     sendResponse(res, 200, users, "User list");
+  }
+
+  async getOneUser(req: Request, res: Response) {
+    const { id } = req.params;
+    const user: User = await this.userRepository.findOneByOrFail({
+      id: Number(id),
+    });
+    sendResponse(res, 200, user, `${user.username} information`);
   }
 }
 
