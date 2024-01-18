@@ -1,10 +1,9 @@
 import express from "express";
-import UserController from "../http/controlers/user.controller";
-
-const userController = new UserController();
+// It suppose to be a controller import, but after that, the properties pass by error handler middleware and bind function
+import users from "../http/middleware/controllerHandler.middleware";
 
 const router = express.Router();
 
-router.get("/", userController.getAllUsers);
+router.get("/", users.getAllUsers);
 
 export default router;

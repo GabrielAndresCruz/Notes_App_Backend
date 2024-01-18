@@ -11,17 +11,13 @@ export class UserController {
         }
        Or, use bind outside the controller Class, in user.route.ts file:
         router.get("/user", userController.getFunction.bind(getFunction))
-    2- User arrow function to getFunctions (I'm on this way). Arrow function can't use like constructors, and don't have .prototype property.
+    2- User arrow function to getFunctions. Arrow function can't use like constructors, and don't have .prototype property.
   */
+  private userRepository = AppDataSource.getRepository(User);
 
   async getAllUsers(req: Request, res: Response) {
-    try {
-      const userRepository = AppDataSource.getRepository(User);
-      const users = await userRepository.find();
-      sendResponse(res, 200, users, "User list");
-    } catch (error) {
-      sendError(res, 400, "Error to get Users list", error);
-    }
+    const users = await this.userRepository.find();
+    sendResponse(res, 200, users, "User list");
   }
 }
 
