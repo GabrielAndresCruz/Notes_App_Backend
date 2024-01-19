@@ -13,8 +13,17 @@ export class UserController {
         router.get("/user", userController.getFunction.bind(getFunction))
     2- User arrow function to getFunctions. Arrow function can't use like constructors, and don't have .prototype property.
   */
+
+  // Private class constant to avoid repetition every time it's needed in different functions.
   private userRepository = AppDataSource.getRepository(User);
 
+  // Binding the controllers functions
+  constructor() {
+    this.getAllUsers = this.getAllUsers.bind(this);
+    this.getOneUser = this.getOneUser.bind(this);
+  }
+
+  // Controllers functions
   async getAllUsers(req: Request, res: Response) {
     const users: Array<User> = await this.userRepository.find();
     sendResponse(res, 200, users, "User list");

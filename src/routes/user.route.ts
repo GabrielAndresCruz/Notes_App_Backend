@@ -1,11 +1,14 @@
 import express from "express";
-// It suppose to be a controller import, but after that, the properties pass by error handler middleware and bind function
-import users from "../http/middleware/controllerHandler.middleware";
+import UserController from "../http/controlers/user.controller";
+import errorHandler from "../http/middleware/errorHandler.middleware";
 
 const router = express.Router();
 
-router.get("/", users.getAllUsers);
+const userController = new UserController();
 
-router.get("/:id", users.getOneUser);
+// The errorHandler middleware catches errors without cluttering the controller logic with try-catch blocks.
+router.get("/", errorHandler(userController.getAllUsers));
+
+router.get("/:id", errorHandler(userController.getOneUser));
 
 export default router;
