@@ -1,9 +1,14 @@
 import { Request, Response } from "express";
 import { AppDataSource } from "../../database/data-source";
 import { User } from "../../database/entities/user.entity";
-import { sendError, sendResponse } from "../../utils/responseHandlers";
-import { RegisterUserDTO } from "../DTOs/user.dto";
+import {
+  sendError,
+  sendResponse,
+  sendSuccess,
+} from "../../utils/responseHandlers";
+import { LoginUserDTO, RegisterUserDTO } from "../DTOs/user.dto";
 import { validateOrReject } from "class-validator";
+import { sign } from "jsonwebtoken";
 
 export class UserController {
   /* When you use private variables to encapsulate the logic, you must take two different ways:
@@ -24,6 +29,7 @@ export class UserController {
     this.getAllUsers = this.getAllUsers.bind(this);
     this.getOneUser = this.getOneUser.bind(this);
     this.registerUser = this.registerUser.bind(this);
+    this.loginUser = this.loginUser.bind(this);
   }
 
   // Controllers functions
@@ -62,6 +68,36 @@ export class UserController {
       newUser,
       `${newUser[0].username} created successfully`
     );
+  }
+
+  async loginUser(req: Request, res: Response) {
+    const { email, password } = req.body;
+
+    // Populate the DTO schema with the required information
+    const userDTO = new LoginUserDTO();
+    Object.assign(userDTO, req.body);
+
+    // Validate errors using DTO
+    await validateOrReject(userDTO);
+
+    // Verify the existence of the user
+    await this.userRepository.findOneByOrFail({ email: email });
+
+    // Both validateOrReject and findOneByOrFail work in a similar way – if the conditions aren't met, they throw an error and halt the compilation.
+
+    // Token generator
+    let accessToken = sign({ email: email }, "access_secret", {
+      expiresIn: 60 * 60,
+    });
+
+    // Adding token to req.headers.cookie
+    res.cookie("access_token", accessToken, {
+      httpOnly: true,
+      maxAge: 7 * 24 * 60 * 60 * 1000, // equivalent to 1 day
+    });
+
+    // SendSuccess and SendResponse are the same, but the first one don't have data object info.
+    sendSuccess(res, 200, "Login successfully");
   }
 }
 

@@ -11,6 +11,8 @@ router.get("/", errorHandler(userController.getAllUsers));
 
 router.get("/:id", errorHandler(userController.getOneUser));
 
-router.get("/register", errorHandler(userController.registerUser));
+router.post("/register", errorHandler(userController.registerUser));
+
+router.post("/login", errorHandler(userController.loginUser));
 
 export default router;
