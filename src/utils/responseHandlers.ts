@@ -49,3 +49,16 @@ export const sendError = (
   };
   res.status(statusCode).send(responseBody);
 };
+
+// Case for send failure or error response, like sendError but without data.
+export const sendFailure = (
+  res: Response,
+  statusCode: number | 404,
+  message: string
+): void => {
+  const responseBody: ApiResponse = {
+    success: false,
+    message,
+  };
+  res.status(statusCode).send(responseBody);
+};
