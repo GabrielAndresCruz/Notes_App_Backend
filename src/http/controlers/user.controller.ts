@@ -3,6 +3,7 @@ import { AppDataSource } from "../../database/data-source";
 import { User } from "../../database/entities/user.entity";
 import {
   sendError,
+  sendFailure,
   sendResponse,
   sendSuccess,
 } from "../../utils/responseHandlers";
@@ -30,6 +31,7 @@ export class UserController {
     this.getOneUser = this.getOneUser.bind(this);
     this.registerUser = this.registerUser.bind(this);
     this.loginUser = this.loginUser.bind(this);
+    this.logoutUser = this.logoutUser.bind(this);
   }
 
   // Controllers functions
@@ -98,6 +100,25 @@ export class UserController {
 
     // SendSuccess and SendResponse are the same, but the first one don't have data object info.
     sendSuccess(res, 200, "Login successfully");
+  }
+
+  async logoutUser(req: Request, res: Response) {
+    // Take token of header
+    const tokenString = req.headers.cookie;
+
+    // With this logic, we manage to separate the key from the value since it comes as a single string
+    const equalsIndex: any = tokenString?.indexOf("=");
+    const tokenValue = tokenString?.slice(equalsIndex + 1);
+
+    // Validate existing token
+    if (!tokenValue) {
+      return sendFailure(res, 404, "No account logged");
+    }
+
+    // Reset cookie to clear the token
+    res.cookie("access_token", "", { maxAge: 0 });
+
+    sendSuccess(res, 200, "Successfully sign out");
   }
 }
 
