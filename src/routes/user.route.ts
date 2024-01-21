@@ -18,4 +18,11 @@ router.post("/login", errorHandler(userController.loginUser));
 
 router.post("/logout", errorHandler(userController.logoutUser));
 
+// authenticateJwt middleware give a user information to controller, thanks to the token.
+router.post(
+  "/update",
+  authenticateJwt,
+  errorHandler(userController.updateUser)
+);
+
 export default router;

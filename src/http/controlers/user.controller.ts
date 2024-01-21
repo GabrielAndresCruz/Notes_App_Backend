@@ -7,7 +7,7 @@ import {
   sendResponse,
   sendSuccess,
 } from "../../utils/responseHandlers";
-import { LoginUserDTO, RegisterUserDTO } from "../DTOs/user.dto";
+import { LoginUserDTO, RegisterUserDTO, UpdateUserDTO } from "../DTOs/user.dto";
 import { validateOrReject } from "class-validator";
 import { sign } from "jsonwebtoken";
 
@@ -32,6 +32,7 @@ export class UserController {
     this.registerUser = this.registerUser.bind(this);
     this.loginUser = this.loginUser.bind(this);
     this.logoutUser = this.logoutUser.bind(this);
+    this.updateUser = this.updateUser.bind(this);
   }
 
   // Controllers functions
@@ -119,6 +120,34 @@ export class UserController {
     res.cookie("access_token", "", { maxAge: 0 });
 
     sendSuccess(res, 200, "Successfully sign out");
+  }
+
+  async updateUser(req: Request, res: Response) {
+    // Use id property thanks to authenticationJwt middleware
+    const id = req.user?.id;
+    const userData = req.body;
+
+    // Populate the DTO schema with the required information
+    const userDTO = new UpdateUserDTO();
+    Object.assign(userDTO, userData);
+
+    // Validate errors using DTO
+    await validateOrReject(userDTO);
+
+    const existingUser = await this.userRepository.findOneByOrFail({
+      id: Number(id),
+    });
+
+    /* Both functions (validateOrReject and findOneByOrFail) work in a similar way – if the conditions 
+    aren't met, they throw an error and stop the compilation. */
+
+    // Update the user with the body data
+    this.userRepository.merge(existingUser, userData);
+
+    // Save the updated user in the database
+    const updateUser = await this.userRepository.save(existingUser);
+
+    sendResponse(res, 200, updateUser, "User updated successfully");
   }
 }
 
