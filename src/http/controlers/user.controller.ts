@@ -33,6 +33,7 @@ export class UserController {
     this.loginUser = this.loginUser.bind(this);
     this.logoutUser = this.logoutUser.bind(this);
     this.updateUser = this.updateUser.bind(this);
+    this.deleteUser = this.deleteUser.bind(this);
   }
 
   // Controllers functions
@@ -148,6 +149,19 @@ export class UserController {
     const updateUser = await this.userRepository.save(existingUser);
 
     sendResponse(res, 200, updateUser, "User updated successfully");
+  }
+
+  async deleteUser(req: Request, res: Response) {
+    // Use id property thanks to authenticationJwt middleware
+    const id = req.user?.id;
+
+    // Find the user with the specified 'id'
+    const user = await this.userRepository.findOneByOrFail({ id: Number(id) });
+
+    // Remove the found user from the database
+    this.userRepository.remove(user);
+
+    sendSuccess(res, 200, "User deleted successfully");
   }
 }
 

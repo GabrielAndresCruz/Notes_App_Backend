@@ -25,4 +25,10 @@ router.post(
   errorHandler(userController.updateUser)
 );
 
+router.post(
+  "/delete",
+  authenticateJwt,
+  errorHandler(userController.deleteUser)
+);
+
 export default router;
