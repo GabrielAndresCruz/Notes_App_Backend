@@ -8,24 +8,20 @@ const router = express.Router();
 const userController = new UserController();
 
 // The errorHandler middleware catches errors without cluttering the controller logic with try-catch blocks.
-router.get("/", errorHandler(userController.getAllUsers));
-
-router.get("/:id", errorHandler(userController.getOneUser));
-
 router.post("/register", errorHandler(userController.registerUser));
 
 router.post("/login", errorHandler(userController.loginUser));
 
-router.post("/logout", errorHandler(userController.logoutUser));
+router.get("/logout", errorHandler(userController.logoutUser)); // The order of the routes is very important!
+
+router.get("/", errorHandler(userController.getAllUsers)); // If you put this route above logout, you will not be able to occupy logout
+
+router.get("/:id", errorHandler(userController.getOneUser));
 
 // authenticateJwt middleware give a user information to controller, thanks to the token.
-router.post(
-  "/update",
-  authenticateJwt,
-  errorHandler(userController.updateUser)
-);
+router.put("/update", authenticateJwt, errorHandler(userController.updateUser));
 
-router.post(
+router.delete(
   "/delete",
   authenticateJwt,
   errorHandler(userController.deleteUser)

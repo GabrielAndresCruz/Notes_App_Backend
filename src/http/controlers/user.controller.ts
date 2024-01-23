@@ -65,13 +65,7 @@ export class UserController {
     // Create and Save new User
     const newUser = this.userRepository.create(userData);
     await this.userRepository.save(newUser);
-
-    sendResponse(
-      res,
-      200,
-      newUser,
-      `${newUser[0].username} created successfully`
-    );
+    sendResponse(res, 200, newUser, "User created successfully");
   }
 
   async loginUser(req: Request, res: Response) {
@@ -79,25 +73,35 @@ export class UserController {
 
     // Populate the DTO schema with the required information
     const userDTO = new LoginUserDTO();
-    Object.assign(userDTO, req.body);
 
+    Object.assign(userDTO, req.body);
     // Validate errors using DTO
     await validateOrReject(userDTO);
 
     // Verify the existence of the user
-    await this.userRepository.findOneByOrFail({ email: email });
+    const user = await this.userRepository.findOneByOrFail({ email: email });
 
     // Both validateOrReject and findOneByOrFail work in a similar way – if the conditions aren't met, they throw an error and halt the compilation.
 
     // Token generator
-    let accessToken = sign({ email: email }, "access_secret", {
-      expiresIn: 60 * 60,
-    });
+    let accessToken = sign(
+      {
+        id: user.id,
+        /* This is what the token info have in his content. If you use email here, the token 
+          would travel throw the app with email property. */
+      },
+      "access_secret", // Secret or private Key, should be in .env file.
+      {
+        expiresIn: 60 * 60,
+      }
+    );
 
     // Adding token to req.headers.cookie
     res.cookie("access_token", accessToken, {
       httpOnly: true,
       maxAge: 7 * 24 * 60 * 60 * 1000, // equivalent to 1 day
+      // Use the next property in production to protect token.
+      // sameSite: "strict", // Restrict cookie to same site
     });
 
     // SendSuccess and SendResponse are the same, but the first one don't have data object info.
