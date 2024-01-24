@@ -20,11 +20,20 @@ export class NoteController {
   // Binding the controllers functions
   constructor() {
     this.getAllNotes = this.getAllNotes.bind(this);
+    this.getOneNote = this.getOneNote.bind(this);
   }
 
   // Controllers functions
   async getAllNotes(req: Request, res: Response) {
     const notes: Array<Note> = await this.noteRepository.find();
     sendResponse(res, 200, notes, "Notes list");
+  }
+
+  async getOneNote(req: Request, res: Response) {
+    const { id } = req.params;
+    const note: Note = await this.noteRepository.findOneByOrFail({
+      id: Number(id),
+    });
+    sendResponse(res, 200, note, "Note information");
   }
 }

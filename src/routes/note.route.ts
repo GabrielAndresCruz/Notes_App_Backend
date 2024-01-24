@@ -8,3 +8,7 @@ const noteController = new NoteController();
 
 // The errorHandler middleware catches errors without cluttering the controller logic with try-catch blocks.
 router.get("/", errorHandler(noteController.getAllNotes));
+
+router.get("/:id", errorHandler(noteController.getOneNote));
+
+export default router;
