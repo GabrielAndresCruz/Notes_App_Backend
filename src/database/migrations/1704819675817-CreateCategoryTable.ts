@@ -42,6 +42,7 @@ export class CreateCategoryTable1704819675817 implements MigrationInterface {
         referencedColumnNames: ["id"],
         referencedTableName: TABLE_NAMES.USER,
         onDelete: "CASCADE",
+        name: "FK_CATEGORY_USER",
       })
     );
   }

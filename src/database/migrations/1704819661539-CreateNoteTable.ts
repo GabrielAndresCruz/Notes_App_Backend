@@ -53,6 +53,7 @@ export class CreateNoteTable1704819661539 implements MigrationInterface {
         referencedColumnNames: ["id"],
         referencedTableName: TABLE_NAMES.USER,
         onDelete: "CASCADE",
+        name: "FK_NOTE_USER",
       })
     );
   }
