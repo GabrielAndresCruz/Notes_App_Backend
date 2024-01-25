@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  JoinColumn,
   ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -19,6 +20,8 @@ export class Category {
 
   // Establish a many-to-one relationship with the User entity, specifying the inverse side and onDelete behavior
   @ManyToOne(() => User, (user) => user.categories, { onDelete: "CASCADE" })
+  // Specify the name of the foreign key column in the 'category' table
+  @JoinColumn({ name: "user_id" }) // "user_id" is the same name that field have in the Category table.
   user: User;
 
   // Establish a many-to-many relationship with the Note entity specifying the inverse side onDelete behavior
