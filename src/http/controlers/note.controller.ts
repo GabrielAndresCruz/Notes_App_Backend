@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { AppDataSource } from "../../database/data-source";
 import { Note } from "../../database/entities/note.entity";
 import { sendResponse } from "../../utils/responseHandlers";
+import { PaginationInfo, Paginator } from "../middleware/paginator.middleware";
 
 export class NoteController {
   /* When you use private variables to encapsulate the logic, you must take two different ways:
@@ -25,7 +26,21 @@ export class NoteController {
 
   // Controllers functions
   async getAllNotes(req: Request, res: Response) {
-    const notes: Array<Note> = await this.noteRepository.find();
+    // Use id property thanks to authenticationJwt middleware, for get all notes of one user.
+    const userId = req.user?.id;
+
+    // Create a query builder for 'Note' entity.
+    const queryBuilder = this.noteRepository
+      .createQueryBuilder("note")
+      .leftJoinAndSelect("note.user", "user") // leftJoinAndSelect(relation: string, alias: string): this is like relations: ["user"]
+      // .leftJoinAndSelect("note.categories", "categories")
+      .where("user.id = :userId", { userId });
+
+    const paginationPromise = Paginator.paginate(queryBuilder, req) as Promise<{
+      records: Note[];
+      paginationInfo: PaginationInfo;
+    }>;
+    const { records: notes, paginationInfo } = await paginationPromise;
     sendResponse(res, 200, notes, "Notes list");
   }
 
