@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  JoinColumn,
   JoinTable,
   ManyToMany,
   ManyToOne,
@@ -26,6 +27,7 @@ export class Note {
 
   // Establish a many-to-one relationship with the User entity, specifying the inverse side and onDelete behavior
   @ManyToOne(() => User, (user) => user.notes, { onDelete: "CASCADE" })
+  @JoinColumn({ name: "user_id" }) // Specifies column name on DB
   user: User;
 
   // Establish a many-to-many relationship with the Category entity specifying the inverse side onDelete behavior
