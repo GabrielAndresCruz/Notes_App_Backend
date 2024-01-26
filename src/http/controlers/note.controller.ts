@@ -3,6 +3,10 @@ import { AppDataSource } from "../../database/data-source";
 import { Note } from "../../database/entities/note.entity";
 import { sendResponse } from "../../utils/responseHandlers";
 import { PaginationInfo, Paginator } from "../middleware/paginator.middleware";
+import { CreateNoteDTO } from "../DTOs/note.dto";
+import { validateOrReject } from "class-validator";
+import { Category } from "../../database/entities/category.entity";
+import { User } from "../../database/entities/user.entity";
 
 export class NoteController {
   /* When you use private variables to encapsulate the logic, you must take two different ways:
@@ -22,6 +26,7 @@ export class NoteController {
   constructor() {
     this.getAllNotes = this.getAllNotes.bind(this);
     this.getOneNote = this.getOneNote.bind(this);
+    this.createNote = this.createNote.bind(this);
   }
 
   // Controllers functions
@@ -50,5 +55,50 @@ export class NoteController {
       id: Number(id),
     });
     sendResponse(res, 200, note, "Note information");
+  }
+
+  async createNote(req: Request, res: Response) {
+    // Get the id by req.user
+    const userId = req.user?.id;
+    // Get the note info by req.body
+    const noteData = req.body;
+
+    // Populate the DTO schema with the required information
+    const noteDTO = new CreateNoteDTO();
+    Object.assign(noteDTO, noteData);
+
+    // Validate errors using DTO
+    await validateOrReject(noteDTO);
+
+    const newNote = this.noteRepository.create({
+      title: noteData.title,
+      content: noteData.content,
+      archived: false,
+    });
+
+    // Verify if the new note has categories label
+    if (noteData.categories.length !== 0) {
+      // Get the categories by their ID's
+      const categoriesIds = noteData.categories;
+      const categories: Category = await AppDataSource.getRepository(
+        Category
+      ).findOneByOrFail({
+        id: categoriesIds,
+      });
+
+      // Establish relationship with categories and actualize the note
+      newNote.categories = [categories];
+    } else {
+      newNote.categories = [];
+    }
+
+    // Get the user
+    const user: User = await AppDataSource.getRepository(User).findOneByOrFail({
+      id: userId,
+    });
+
+    // Establish note - user relation
+    newNote.user = user;
+    await this.noteRepository.save(newNote);
   }
 }

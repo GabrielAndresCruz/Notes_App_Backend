@@ -11,4 +11,6 @@ router.get("/", errorHandler(noteController.getAllNotes));
 
 router.get("/:id", errorHandler(noteController.getOneNote));
 
+router.post("/", errorHandler(noteController.createNote));
+
 export default router;
