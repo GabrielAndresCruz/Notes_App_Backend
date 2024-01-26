@@ -1,7 +1,12 @@
 import { Request, Response } from "express";
 import { AppDataSource } from "../../database/data-source";
 import { Note } from "../../database/entities/note.entity";
-import { sendResponse } from "../../utils/responseHandlers";
+import {
+  sendError,
+  sendFailure,
+  sendResponse,
+  sendSuccess,
+} from "../../utils/responseHandlers";
 import { PaginationInfo, Paginator } from "../middleware/paginator.middleware";
 import { CreateNoteDTO } from "../DTOs/note.dto";
 import { validateOrReject } from "class-validator";
@@ -27,6 +32,8 @@ export class NoteController {
     this.getAllNotes = this.getAllNotes.bind(this);
     this.getOneNote = this.getOneNote.bind(this);
     this.createNote = this.createNote.bind(this);
+    this.updateNote = this.updateNote.bind(this);
+    this.deleteNote = this.deleteNote.bind(this);
   }
 
   // Controllers functions
@@ -100,5 +107,49 @@ export class NoteController {
     // Establish note - user relation
     newNote.user = user;
     await this.noteRepository.save(newNote);
+  }
+
+  async updateNote(req: Request, res: Response) {
+    const id = req.params;
+    const noteData = req.body;
+
+    // Retrieve the existing note from the database
+    const note: Note[] = await this.noteRepository.find({
+      where: { id: Number(id) },
+      relations: ["category"],
+    });
+
+    // Ensure that the note to be edited exists
+    // Not use findOneOrFail property, because we want to manage the error message in case the note doesn't exist.
+    if (!note || note.length === 0) {
+      sendFailure(res, 404, "Note doesn't exists");
+    }
+
+    // Update the note with DTO's data
+    // Encounter issues with the category, as it consistently arrives as an array with information. Only the IDs need to be fetched.
+    this.noteRepository.merge(note[0], {
+      title: noteData.title ? noteData.title : note[0].title,
+      content: noteData.content ? noteData.content : note[0].content,
+      archived: noteData.archived ? noteData.archived : note[0].archived,
+    });
+
+    // Save the updated note in the database
+    const updatedNote = await this.noteRepository.save(note);
+
+    sendResponse(res, 200, updatedNote, "Note updated successfully");
+  }
+
+  async deleteNote(req: Request, res: Response) {
+    const id = req.params;
+
+    // Find note with the specified 'id'
+    const note = await this.noteRepository.findOneByOrFail({
+      id: Number(id),
+    });
+
+    // Remove the found note from the database
+    await this.noteRepository.remove(note);
+
+    sendSuccess(res, 200, "Note deleted successfully");
   }
 }
