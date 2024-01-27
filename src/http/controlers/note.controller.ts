@@ -48,10 +48,13 @@ export class NoteController {
       // .leftJoinAndSelect("note.categories", "categories")
       .where("user.id = :userId", { userId });
 
+    // Use pagination for show data
     const paginationPromise = Paginator.paginate(queryBuilder, req) as Promise<{
       records: Note[];
       paginationInfo: PaginationInfo;
     }>;
+
+    // Destructuring the promise of pagination for get the notes list and the pagination info
     const { records: notes, paginationInfo } = await paginationPromise;
     sendResponse(res, 200, notes, "Notes list");
   }
