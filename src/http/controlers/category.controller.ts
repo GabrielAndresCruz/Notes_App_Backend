@@ -2,7 +2,11 @@ import { Request, Response } from "express";
 import { AppDataSource } from "../../database/data-source";
 import { Category } from "../../database/entities/category.entity";
 import { PaginationInfo, Paginator } from "../middleware/paginator.middleware";
-import { sendResponse } from "../../utils/responseHandlers";
+import { sendResponse, sendSuccess } from "../../utils/responseHandlers";
+import { CreateCategoryDTO } from "../DTOs/category.dto";
+import { validateOrReject } from "class-validator";
+import { Note } from "../../database/entities/note.entity";
+import { User } from "../../database/entities/user.entity";
 
 export class CategoryController {
   /* When you use private variables to encapsulate the logic, you must take two different ways:
@@ -16,11 +20,12 @@ export class CategoryController {
   */
 
   // Private class constant to avoid repetition every time it's needed in different functions.
-  private categoryRepositorty = AppDataSource.getRepository(Category);
+  private categoryRepository = AppDataSource.getRepository(Category);
 
   // Binding the controllers functions
   constructor() {
     this.getAllCategories = this.getAllCategories.bind(this);
+    this.createCategory = this.createCategory.bind(this);
   }
 
   // Controllers functions
@@ -29,7 +34,7 @@ export class CategoryController {
     const userId = req.user?.id;
 
     // Create a query builder for 'Category' entity
-    const queryBuilder = this.categoryRepositorty
+    const queryBuilder = this.categoryRepository
       .createQueryBuilder("category")
       .leftJoinAndSelect("category.user", "user") // leftJoinAndSelect(relation: string, alias: string): this is like relations: ["user"]
       .where("user.id = :userId", { userId });
@@ -43,5 +48,48 @@ export class CategoryController {
     // Destructuring the promise of pagination for get the categoriees list and the pagination info
     const { records: categories, paginationInfo } = await paginationPromise;
     sendResponse(res, 200, categories, "Categories list");
+  }
+
+  async createCategory(req: Request, res: Response) {
+    // Get the id by req.user
+    const userId = req.user?.id;
+    // Get the category info by req.body
+    const categoryData = req.body;
+
+    // Populate the DTO schema with the required information
+    const categoryDTO = new CreateCategoryDTO();
+    Object.assign(categoryDTO, categoryData);
+
+    // Validate errors using DTO
+    await validateOrReject(categoryDTO);
+
+    // Create new category
+    const newCategory = this.categoryRepository.create({
+      name: categoryData.name,
+    });
+    // Verify if the new category has notes.
+    if (categoryData.notes && categoryData.notes.length > 0) {
+      // Get the categories by their IDs
+      const noteIds = categoryData.notes;
+      const notes = await AppDataSource.getRepository(Note).findBy({
+        id: noteIds,
+      });
+
+      // Establish relationship with categories and actualize the note
+      newCategory.notes = notes;
+    } else {
+      newCategory.notes = [];
+    }
+
+    // Get the user
+    const user: User = await AppDataSource.getRepository(User).findOneByOrFail({
+      id: userId,
+    });
+
+    // Establish category - user relation
+    newCategory.user = user;
+    await this.categoryRepository.save(newCategory);
+
+    sendResponse(res, 200, newCategory, "Category created successfully");
   }
 }

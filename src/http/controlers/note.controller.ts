@@ -90,14 +90,12 @@ export class NoteController {
     if (noteData.categories.length !== 0) {
       // Get the categories by their ID's
       const categoriesIds = noteData.categories;
-      const categories: Category = await AppDataSource.getRepository(
-        Category
-      ).findOneByOrFail({
+      const categories = await AppDataSource.getRepository(Category).findBy({
         id: categoriesIds,
       });
 
       // Establish relationship with categories and actualize the note
-      newNote.categories = [categories];
+      newNote.categories = categories;
     } else {
       newNote.categories = [];
     }
@@ -110,6 +108,8 @@ export class NoteController {
     // Establish note - user relation
     newNote.user = user;
     await this.noteRepository.save(newNote);
+
+    sendResponse(res, 200, newNote, "Note created successfully");
   }
 
   async updateNote(req: Request, res: Response) {
