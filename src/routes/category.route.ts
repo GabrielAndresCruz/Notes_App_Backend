@@ -8,4 +8,8 @@ const categoryController = new CategoryController();
 
 router.get("/", errorHandler(categoryController.getAllCategories));
 
+router.post("/", errorHandler(categoryController.createCategory));
+
+router.put("/", errorHandler(categoryController.updateCategory));
+
 export default router;

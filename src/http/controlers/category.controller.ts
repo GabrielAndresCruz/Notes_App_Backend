@@ -2,7 +2,11 @@ import { Request, Response } from "express";
 import { AppDataSource } from "../../database/data-source";
 import { Category } from "../../database/entities/category.entity";
 import { PaginationInfo, Paginator } from "../middleware/paginator.middleware";
-import { sendResponse, sendSuccess } from "../../utils/responseHandlers";
+import {
+  sendFailure,
+  sendResponse,
+  sendSuccess,
+} from "../../utils/responseHandlers";
 import { CreateCategoryDTO } from "../DTOs/category.dto";
 import { validateOrReject } from "class-validator";
 import { Note } from "../../database/entities/note.entity";
@@ -26,6 +30,7 @@ export class CategoryController {
   constructor() {
     this.getAllCategories = this.getAllCategories.bind(this);
     this.createCategory = this.createCategory.bind(this);
+    this.updateCategory = this.updateCategory.bind(this);
   }
 
   // Controllers functions
@@ -91,5 +96,36 @@ export class CategoryController {
     await this.categoryRepository.save(newCategory);
 
     sendResponse(res, 200, newCategory, "Category created successfully");
+  }
+
+  async updateCategory(req: Request, res: Response) {
+    const id = req.user?.id;
+    const categoryData = req.body;
+
+    // Make sure we have body info
+    if (!categoryData.name) {
+      sendFailure(res, 404, "Must submit a new name for the category");
+    }
+    // Retrieve the existing category from the database
+    const category = await this.categoryRepository.find({
+      where: { id: Number(id) },
+      relations: ["notes"],
+    });
+
+    // Ensure that the category to be edited exists
+    // Not use findOneOrFail property, because we want to manage the error message in case the note doesn't exist.
+    if (!category || category.length === 0) {
+      sendFailure(res, 404, "Category doesn't exists");
+    }
+
+    // Update the note with DTO's data
+    this.categoryRepository.merge(category[0], {
+      name: categoryData.name,
+    });
+
+    // Save the updated category in database
+    const updateCategory = await this.categoryRepository.save(category);
+
+    sendResponse(res, 200, updateCategory, "Category updated successfully");
   }
 }
