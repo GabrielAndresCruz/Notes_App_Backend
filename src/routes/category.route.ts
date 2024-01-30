@@ -12,4 +12,6 @@ router.post("/", errorHandler(categoryController.createCategory));
 
 router.put("/", errorHandler(categoryController.updateCategory));
 
+router.delete("/", errorHandler(categoryController.deleteCategory));
+
 export default router;

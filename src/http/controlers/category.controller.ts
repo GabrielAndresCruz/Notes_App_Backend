@@ -31,6 +31,7 @@ export class CategoryController {
     this.getAllCategories = this.getAllCategories.bind(this);
     this.createCategory = this.createCategory.bind(this);
     this.updateCategory = this.updateCategory.bind(this);
+    this.deleteCategory = this.deleteCategory.bind(this);
   }
 
   // Controllers functions
@@ -127,5 +128,19 @@ export class CategoryController {
     const updateCategory = await this.categoryRepository.save(category);
 
     sendResponse(res, 200, updateCategory, "Category updated successfully");
+  }
+
+  async deleteCategory(req: Request, res: Response) {
+    const id = req.params;
+
+    // Find the category with the specified 'id'
+    const category = await this.categoryRepository.findOneByOrFail({
+      id: Number(id),
+    });
+
+    // Remove the found category from the database
+    await this.categoryRepository.remove(category);
+
+    sendSuccess(res, 200, "Category deleted successfully");
   }
 }
