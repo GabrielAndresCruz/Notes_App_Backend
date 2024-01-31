@@ -13,8 +13,8 @@ router.get("/:id", errorHandler(noteController.getOneNote));
 
 router.post("/", errorHandler(noteController.createNote));
 
-router.put("/", errorHandler(noteController.updateNote));
+router.put("/:id", errorHandler(noteController.updateNote));
 
-router.delete("/", errorHandler(noteController.deleteNote));
+router.delete("/:id", errorHandler(noteController.deleteNote));
 
 export default router;

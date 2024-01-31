@@ -45,7 +45,7 @@ export class NoteController {
     const queryBuilder = this.noteRepository
       .createQueryBuilder("note")
       .leftJoinAndSelect("note.user", "user") // leftJoinAndSelect(relation: string, alias: string): this is like relations: ["user"]
-      // .leftJoinAndSelect("note.categories", "categories")
+      .leftJoinAndSelect("note.categories", "categories")
       .where("user.id = :userId", { userId });
 
     // Use pagination for show data
@@ -87,7 +87,7 @@ export class NoteController {
     });
 
     // Verify if the new note has categories label
-    if (noteData.categories.length !== 0) {
+    if (noteData.categories && noteData.categories.length !== 0) {
       // Get the categories by their ID's
       const categoriesIds = noteData.categories;
       const categories = await AppDataSource.getRepository(Category).findBy({
@@ -113,13 +113,15 @@ export class NoteController {
   }
 
   async updateNote(req: Request, res: Response) {
-    const id = req.params;
+    const { id } = req.params;
     const noteData = req.body;
 
     // Retrieve the existing note from the database
     const note: Note[] = await this.noteRepository.find({
       where: { id: Number(id) },
-      relations: ["category"],
+      relations: {
+        categories: true,
+      },
     });
 
     // Ensure that the note to be edited exists
@@ -143,7 +145,7 @@ export class NoteController {
   }
 
   async deleteNote(req: Request, res: Response) {
-    const id = req.params;
+    const { id } = req.params;
 
     // Find note with the specified 'id'
     const note = await this.noteRepository.findOneByOrFail({

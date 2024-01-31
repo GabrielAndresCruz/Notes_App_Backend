@@ -26,6 +26,7 @@ export class CreateNoteDTO {
   archived?: boolean;
 
   @IsArray({ message: "Category must be an array." })
+  @IsOptional()
   category: number[];
 }
 
