@@ -10,8 +10,8 @@ router.get("/", errorHandler(categoryController.getAllCategories));
 
 router.post("/", errorHandler(categoryController.createCategory));
 
-router.put("/", errorHandler(categoryController.updateCategory));
+router.put("/:id", errorHandler(categoryController.updateCategory));
 
-router.delete("/", errorHandler(categoryController.deleteCategory));
+router.delete("/:id", errorHandler(categoryController.deleteCategory));
 
 export default router;

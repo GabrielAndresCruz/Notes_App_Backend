@@ -43,6 +43,7 @@ export class CategoryController {
     const queryBuilder = this.categoryRepository
       .createQueryBuilder("category")
       .leftJoinAndSelect("category.user", "user") // leftJoinAndSelect(relation: string, alias: string): this is like relations: ["user"]
+      .leftJoinAndSelect("category.notes", "notes")
       .where("user.id = :userId", { userId });
 
     // Use pagination for show data
@@ -100,7 +101,7 @@ export class CategoryController {
   }
 
   async updateCategory(req: Request, res: Response) {
-    const id = req.user?.id;
+    const { id } = req.params;
     const categoryData = req.body;
 
     // Make sure we have body info
@@ -110,7 +111,9 @@ export class CategoryController {
     // Retrieve the existing category from the database
     const category = await this.categoryRepository.find({
       where: { id: Number(id) },
-      relations: ["notes"],
+      relations: {
+        notes: true,
+      },
     });
 
     // Ensure that the category to be edited exists
@@ -131,7 +134,7 @@ export class CategoryController {
   }
 
   async deleteCategory(req: Request, res: Response) {
-    const id = req.params;
+    const { id } = req.params;
 
     // Find the category with the specified 'id'
     const category = await this.categoryRepository.findOneByOrFail({
