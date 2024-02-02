@@ -54,7 +54,7 @@ export class CategoryController {
 
     // Destructuring the promise of pagination for get the categoriees list and the pagination info
     const { records: categories, paginationInfo } = await paginationPromise;
-    sendResponse(res, 200, categories, "Categories list");
+    sendResponse(res, 200, categories, "Categories list", paginationInfo);
   }
 
   async createCategory(req: Request, res: Response) {
@@ -97,7 +97,7 @@ export class CategoryController {
     newCategory.user = user;
     await this.categoryRepository.save(newCategory);
 
-    sendResponse(res, 200, newCategory, "Category created successfully");
+    sendResponse(res, 200, newCategory, "Category created successfully", null);
   }
 
   async updateCategory(req: Request, res: Response) {
@@ -130,7 +130,13 @@ export class CategoryController {
     // Save the updated category in database
     const updateCategory = await this.categoryRepository.save(category);
 
-    sendResponse(res, 200, updateCategory, "Category updated successfully");
+    sendResponse(
+      res,
+      200,
+      updateCategory,
+      "Category updated successfully",
+      null
+    );
   }
 
   async deleteCategory(req: Request, res: Response) {

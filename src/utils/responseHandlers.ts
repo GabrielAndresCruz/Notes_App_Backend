@@ -5,6 +5,7 @@ interface ApiResponse {
   success: boolean;
   message: string;
   data?: any;
+  paginationInfo?: any;
 }
 
 // For this case, you need send data to show.
@@ -12,12 +13,14 @@ export const sendResponse = (
   res: Response,
   statusCode: number | 200,
   data: any,
-  message: string
+  message: string,
+  paginationInfo: any = null
 ): void => {
   const responseBody: ApiResponse = {
     success: true,
     message,
     data,
+    paginationInfo,
   };
   res.status(statusCode).send(responseBody);
 };

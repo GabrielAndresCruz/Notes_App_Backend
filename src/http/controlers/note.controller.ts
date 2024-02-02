@@ -56,7 +56,7 @@ export class NoteController {
 
     // Destructuring the promise of pagination for get the notes list and the pagination info
     const { records: notes, paginationInfo } = await paginationPromise;
-    sendResponse(res, 200, notes, "Notes list");
+    sendResponse(res, 200, notes, "Notes list", paginationInfo);
   }
 
   async getOneNote(req: Request, res: Response) {
@@ -64,7 +64,7 @@ export class NoteController {
     const note: Note = await this.noteRepository.findOneByOrFail({
       id: Number(id),
     });
-    sendResponse(res, 200, note, "Note information");
+    sendResponse(res, 200, note, "Note information", null);
   }
 
   async createNote(req: Request, res: Response) {
@@ -109,7 +109,7 @@ export class NoteController {
     newNote.user = user;
     await this.noteRepository.save(newNote);
 
-    sendResponse(res, 200, newNote, "Note created successfully");
+    sendResponse(res, 200, newNote, "Note created successfully", null);
   }
 
   async updateNote(req: Request, res: Response) {
@@ -141,7 +141,7 @@ export class NoteController {
     // Save the updated note in the database
     const updatedNote = await this.noteRepository.save(note);
 
-    sendResponse(res, 200, updatedNote, "Note updated successfully");
+    sendResponse(res, 200, updatedNote, "Note updated successfully", null);
   }
 
   async deleteNote(req: Request, res: Response) {
