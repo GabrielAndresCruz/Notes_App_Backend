@@ -18,13 +18,8 @@ router.get("/", errorHandler(userController.getAllUsers)); // If you put this ro
 
 router.get("/:id", errorHandler(userController.getOneUser));
 
-// authenticateJwt middleware give a user information to controller, thanks to the token.
-router.put("/update", authenticateJwt, errorHandler(userController.updateUser));
+router.put("/update", errorHandler(userController.updateUser));
 
-router.delete(
-  "/delete",
-  authenticateJwt,
-  errorHandler(userController.deleteUser)
-);
+router.delete("/delete", errorHandler(userController.deleteUser));
 
 export default router;

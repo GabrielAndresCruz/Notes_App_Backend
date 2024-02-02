@@ -10,6 +10,7 @@ import {
 import { LoginUserDTO, RegisterUserDTO, UpdateUserDTO } from "../DTOs/user.dto";
 import { validateOrReject } from "class-validator";
 import { sign } from "jsonwebtoken";
+import { PaginationInfo, Paginator } from "../middleware/paginator.middleware";
 
 export class UserController {
   /* When you use private variables to encapsulate the logic, you must take two different ways:
@@ -38,8 +39,25 @@ export class UserController {
 
   // Controllers functions
   async getAllUsers(req: Request, res: Response) {
-    const users: Array<User> = await this.userRepository.find();
-    sendResponse(res, 200, users, "User list");
+    // Use id property thanks to authenticationJwt middleware, for get all notes of one user.
+    const userId = req.user?.id;
+
+    // Create a query builder for 'User' entity.
+    const queryBuilder = this.userRepository
+      .createQueryBuilder("user")
+      .leftJoinAndSelect("user.notes", "notes") // leftJoinAndSelect(relation: string, alias: string): this is like relations: ["user"]
+      .leftJoinAndSelect("user.categories", "categories")
+      .where("user.id = :userId", { userId });
+
+    // User pagination for show data
+    const paginationPromise = Paginator.paginate(queryBuilder, req) as Promise<{
+      records: User[];
+      paginationInfo: PaginationInfo;
+    }>;
+
+    // Destructuring the promise of pagination for get the notes list and the pagination info
+    const { records: notes, paginationInfo } = await paginationPromise;
+    sendResponse(res, 200, notes, "User list", paginationInfo);
   }
 
   async getOneUser(req: Request, res: Response) {
@@ -47,7 +65,7 @@ export class UserController {
     const user: User = await this.userRepository.findOneByOrFail({
       id: Number(id),
     });
-    sendResponse(res, 200, user, `${user.username} information`);
+    sendResponse(res, 200, user, `${user.username} information`, null);
   }
 
   async registerUser(req: Request, res: Response) {
@@ -65,7 +83,7 @@ export class UserController {
     // Create and Save new User
     const newUser = this.userRepository.create(userData);
     await this.userRepository.save(newUser);
-    sendResponse(res, 200, newUser, "User created successfully");
+    sendResponse(res, 200, newUser, "User created successfully", null);
   }
 
   async loginUser(req: Request, res: Response) {
@@ -152,7 +170,7 @@ export class UserController {
     // Save the updated user in the database
     const updateUser = await this.userRepository.save(existingUser);
 
-    sendResponse(res, 200, updateUser, "User updated successfully");
+    sendResponse(res, 200, updateUser, "User updated successfully", null);
   }
 
   async deleteUser(req: Request, res: Response) {
