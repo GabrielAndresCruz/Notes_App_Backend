@@ -34,6 +34,7 @@ export class NoteController {
     this.createNote = this.createNote.bind(this);
     this.updateNote = this.updateNote.bind(this);
     this.deleteNote = this.deleteNote.bind(this);
+    this.archivedNote = this.archivedNote.bind(this);
   }
 
   // Controllers functions
@@ -156,5 +157,22 @@ export class NoteController {
     await this.noteRepository.remove(note);
 
     sendSuccess(res, 200, "Note deleted successfully");
+  }
+
+  async archivedNote(req: Request, res: Response) {
+    const { id } = req.params;
+
+    // Find note with the specified 'id'
+    const note = await this.noteRepository.findOneByOrFail({
+      id: Number(id),
+    });
+
+    // Archive the note
+    note.archived = true;
+
+    // Save the updated note
+    await this.noteRepository.save(note);
+
+    sendSuccess(res, 200, "Note archived successfully");
   }
 }
