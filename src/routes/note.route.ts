@@ -17,6 +17,8 @@ router.put("/:id", errorHandler(noteController.updateNote));
 
 router.delete("/:id", errorHandler(noteController.deleteNote));
 
-router.patch("/:id", errorHandler(noteController.archivedNote));
+router.patch("/archived/:id", errorHandler(noteController.archivedNote));
+
+router.patch("/unarchived/:id", errorHandler(noteController.unarchivedNote));
 
 export default router;
