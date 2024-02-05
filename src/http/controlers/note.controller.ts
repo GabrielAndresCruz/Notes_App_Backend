@@ -36,6 +36,7 @@ export class NoteController {
     this.deleteNote = this.deleteNote.bind(this);
     this.archivedNote = this.archivedNote.bind(this);
     this.unarchivedNote = this.unarchivedNote.bind(this);
+    this.addCategoriesToNote = this.addCategoriesToNote.bind(this);
   }
 
   // Controllers functions
@@ -192,5 +193,56 @@ export class NoteController {
     await this.noteRepository.save(note);
 
     sendSuccess(res, 200, "Note successfully unarchived");
+  }
+
+  async addCategoriesToNote(req: Request, res: Response) {
+    const { id } = req.params;
+    const { categoriesIds } = req.body;
+
+    if (!categoriesIds || !Array.isArray(categoriesIds)) {
+      sendFailure(res, 404, "Must indicate a category id");
+    }
+
+    // Search note
+    const note = await this.noteRepository.find({
+      where: {
+        id: Number(id),
+      },
+      relations: {
+        categories: true,
+      },
+    });
+
+    // Ensure that the note to be edited exists
+    // Not use findOneOrFail property, because we want to manage the error message in case the note doesn't exist.
+    if (!note || note.length === 0) {
+      sendFailure(res, 404, "Note doesn't exists");
+    }
+
+    // Search category
+    const category = await AppDataSource.getRepository(Category).find({
+      where: {
+        id: Number(id),
+      },
+      relations: {
+        notes: true,
+      },
+    });
+
+    // Ensure that the category to be edited exists
+    // Not use findOneOrFail property, because we want to manage the error message in case the note doesn't exist.
+    if (!category || category.length === 0) {
+      sendFailure(res, 404, "Category doesn't exists");
+    }
+
+    // Assign category to note and note to category
+    note[0].categories.push(category[0]);
+    category[0].notes.push(note[0]);
+
+    // Save changes
+    await this.noteRepository.save(note);
+    await AppDataSource.getRepository(Category).save(category);
+
+    sendResponse(res, 200, note, "Category add successfully on Note");
   }
 }

@@ -21,4 +21,9 @@ router.patch("/archived/:id", errorHandler(noteController.archivedNote));
 
 router.patch("/unarchived/:id", errorHandler(noteController.unarchivedNote));
 
+router.patch(
+  "/addCategories/:id",
+  errorHandler(noteController.addCategoriesToNote)
+);
+
 export default router;
