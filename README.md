@@ -2,6 +2,19 @@
 
 Manage and organize your notes with ease using this RESTful API.
 
+## Introduction
+
+This API provides functionality to create, read, update, and delete notes, categories, and users. It also includes features like authentication, input validation, and error handling.
+
+## Table of Contents
+
+- [Features](#features)
+- [Technologies Used](#technologies-used)
+- [Available Scripts](#available-scripts)
+- [API Endpoints](#api-endpoints)
+<!-- - [Installation](#installation)
+- [Running the Application](#running-the-application)-->
+
 ## Features
 
 - **CRUD Operations**: Perform Create, Read, Update, and Delete operations on notes, categories, and users.
@@ -21,6 +34,7 @@ Manage and organize your notes with ease using this RESTful API.
 | Class Validator | Validation library        |
 | JWT             | Authentication mechanism  |
 
+<!--
 ## Installation
 
 1. Clone the repository:
@@ -50,7 +64,8 @@ docker compose up
 npm run migration:run
 ```
 
-The application will be accessible at http://localhost:3001.
+The application will be accessible at http://localhost:3001
+-->
 
 ## Available Scripts
 
