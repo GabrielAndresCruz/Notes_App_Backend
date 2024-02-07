@@ -196,17 +196,17 @@ export class NoteController {
   }
 
   async addCategoriesToNote(req: Request, res: Response) {
-    const { id } = req.params;
-    const { categoriesIds } = req.body;
+    const noteId = req.params.id;
+    const { id } = req.body;
 
-    if (!categoriesIds || !Array.isArray(categoriesIds)) {
-      sendFailure(res, 404, "Must indicate a category id");
+    if (!id || !Array.isArray(id)) {
+      sendFailure(res, 404, "Must indicate a category id in Array");
     }
 
     // Search note
     const note = await this.noteRepository.find({
       where: {
-        id: Number(id),
+        id: Number(noteId),
       },
       relations: {
         categories: true,
@@ -243,6 +243,6 @@ export class NoteController {
     await this.noteRepository.save(note);
     await AppDataSource.getRepository(Category).save(category);
 
-    sendResponse(res, 200, note, "Category add successfully on Note");
+    sendSuccess(res, 200, "Category add successfully on Note");
   }
 }
