@@ -12,14 +12,18 @@ router.post("/register", errorHandler(userController.registerUser));
 
 router.post("/login", errorHandler(userController.loginUser));
 
-router.get("/logout", errorHandler(userController.logoutUser)); // The order of the routes is very important!
+router.get("/logout", authenticateJwt, errorHandler(userController.logoutUser)); // The order of the routes is very important!
 
-router.get("/", errorHandler(userController.getAllUsers)); // If you put this route above logout, you will not be able to occupy logout
+router.get("/", authenticateJwt, errorHandler(userController.getAllUsers)); // If you put this route above logout, you will not be able to occupy logout
 
-router.get("/:id", errorHandler(userController.getOneUser));
+router.get("/:id", authenticateJwt, errorHandler(userController.getOneUser));
 
-router.put("/update", errorHandler(userController.updateUser));
+router.put("/update", authenticateJwt, errorHandler(userController.updateUser));
 
-router.delete("/delete", errorHandler(userController.deleteUser));
+router.delete(
+  "/delete",
+  authenticateJwt,
+  errorHandler(userController.deleteUser)
+);
 
 export default router;

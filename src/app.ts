@@ -10,9 +10,9 @@ const app: Express = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// authenticateJwt middleware give a user information to controller, thanks to the token.
-app.use("/users", authenticateJwt, userRoute);
+app.use("/users", userRoute);
 
+// authenticateJwt middleware give a user information to controller, thanks to the token.
 app.use("/notes", authenticateJwt, noteRoute);
 
 app.use("/categories", authenticateJwt, categoryRoute);
