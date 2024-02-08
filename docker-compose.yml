@@ -3,6 +3,7 @@ version: "3.8"
 networks:
   REST_API:
 
+
 services:
   mysqldb:
     image: mysql:8
@@ -20,6 +21,27 @@ services:
     logging:
       driver: none
 
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/app
+    environment:
+      NODE_ENV: development
+      DB_HOST: $DB_HOST
+      DB_USERNAME: $DB_USERNAME
+      DB_PASSWORD: $DB_PASSWORD
+      DB_DATABASE: $DB_DATABASE
+    depends_on:
+      - mysqldb
+    command: npm run dev
+    ports:
+      - "3000:3000"
+    networks:
+      - REST_API
+
 volumes:
-  mysql: 
+  mysql:
+
 
