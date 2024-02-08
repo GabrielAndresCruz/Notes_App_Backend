@@ -17,4 +17,11 @@ app.use("/notes", authenticateJwt, noteRoute);
 
 app.use("/categories", authenticateJwt, categoryRoute);
 
+app.use("*", (req, res) => {
+  return res.status(404).json({
+    success: false,
+    message: "Invalid route",
+  });
+});
+
 export default app;
