@@ -10,10 +10,13 @@ This API provides functionality to create, read, update, and delete notes, categ
 
 - [Features](#features)
 - [Technologies Used](#technologies-used)
+- [Installation](#installation)
+- [Running the Application](#running-the-application)
 - [Available Scripts](#available-scripts)
 - [API Endpoints](#api-endpoints)
-<!-- - [Installation](#installation)
-- [Running the Application](#running-the-application)-->
+- [Usage Examples](#usage-examples)
+- [Contributing](#contributing)
+- [Additional Resources](#additional-resources)
 
 ## Features
 
@@ -34,7 +37,6 @@ This API provides functionality to create, read, update, and delete notes, categ
 | Class Validator | Validation library        |
 | JWT             | Authentication mechanism  |
 
-<!--
 ## Installation
 
 1. Clone the repository:
@@ -44,6 +46,7 @@ git clone https://github.com/GabrielAndresCruz/Notes_App_Backend
 ```
 
 2. Navigate to the repository folder and create a `.env` file using `.env.template`. Provide necessary environment variables for the application and database.
+
 3. Install dependencies:
 
 ```
@@ -52,20 +55,9 @@ npm install
 
 ## Running the Application
 
-1. Run Docker container:
-
 ```
 docker compose up
 ```
-
-2. Apply migrations:
-
-```
-npm run migration:run
-```
-
-The application will be accessible at http://localhost:3001
--->
 
 ## Available Scripts
 
@@ -110,3 +102,70 @@ The application will be accessible at http://localhost:3001
 | POST   | /categories     | Create a new category |
 | PUT    | /categories/:id | Update category       |
 | DELETE | /categories/:id | Delete category       |
+
+## Usage Examples
+
+- **Creating a User**:
+
+_POST /users/register_
+
+Body:
+
+```
+{
+    "username": "Username example",
+    "email": "user@example.com",
+    "password": "password123"
+}
+```
+
+- **Creating a Note**:
+
+_POST /notes_
+
+Body:
+
+```
+{
+    "title": "Example Note",
+    "content": "This is an example note content"
+}
+```
+
+- **Creating a Category**:
+
+_POST /categories_
+
+Body:
+
+```
+{
+    "name": "Example category name"
+}
+```
+
+- **Adding a category to note**:
+
+_PATCH /notes/addCategories/:id_
+
+Body:
+
+```
+{
+    "id": [1]
+}
+```
+
+## Contributing
+
+Contributions are welcome! Please follow these guidelines when contributing to the project:
+
+- Fork the repository.
+- Create a new branch for your feature or new changes.
+- Make your changes and submit a pull request.
+
+## Additional Resources
+
+- [TypeORM Documentation](https://typeorm.io/#/)
+- [Express.js Documentation](https://expressjs.com/)
+- [JWT Authentication in Node.js](https://jwt.io/introduction/)
