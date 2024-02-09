@@ -35,7 +35,7 @@ services:
       DB_DATABASE: $DB_DATABASE
     depends_on:
       - mysqldb
-    command: npm run dev
+    command: sh -c "npm run migration:run && npm run dev"
     ports:
       - "3000:3000"
     networks:
